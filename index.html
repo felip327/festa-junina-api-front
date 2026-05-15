@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Arraiá do Artesanato 🌽 - A Miô Loja Junina!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e65100; /* Laranja vibrante */
+            --primary-dark: #bf360c;
+            --accent: #ffb300; /* Amarelo ouro */
+            --secondary: #4caf50; /* Verde palha/milho */
+            --secondary-dark: #2e7d32;
+            --background: #fff8e1; /* Creme muito claro */
+            --text: #3e2723; /* Marrom café */
+            --card-bg: #ffffff;
+            --font-title: 'Chewy', cursive;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        body { 
+            font-family: var(--font-body); 
+            background-color: var(--background); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 0; 
+            overflow-x: hidden;
+        }
+
+        /* --- CABEÇALHO RÚSTICO COM BANDEIRINHAS --- */
+        header { 
+            background-color: var(--primary-dark);
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); /* Textura de madeira */
+            color: white; 
+            text-align: center; 
+            padding: 3rem 1rem; 
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Bandeirinhas Juninas em CSS */
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-image: 
+                linear-gradient(45deg, #4caf50 25%, transparent 25%), 
+                linear-gradient(-45deg, #4caf50 25%, transparent 25%),
+                linear-gradient(45deg, #ffeb3b 25%, transparent 25%), 
+                linear-gradient(-45deg, #ffeb3b 25%, transparent 25%),
+                linear-gradient(45deg, #f44336 25%, transparent 25%), 
+                linear-gradient(-45deg, #f44336 25%, transparent 25%);
+            background-size: 30px 60px;
+            background-position: 0 0, 0 0, 15px 0, 15px 0, 30px 0, 30px 0;
+            repeat: repeat-x;
+        }
+
+        header h1 { 
+            font-family: var(--font-title); 
+            font-size: 3.5rem; 
+            margin: 0; 
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+        
+        header p { 
+            font-size: 1.2rem; 
+            font-weight: 300; 
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        .container { 
+            max-width: 1300px; 
+            margin: 40px auto; 
+            padding: 0 20px; 
+            display: flex; 
+            gap: 30px; 
+            flex-wrap: wrap;
+        }
+
+        /* --- SEÇÃO DE PRODUTOS --- */
+        .produtos { 
+            flex: 3; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 25px; 
+            min-width: 300px;
+        }
+
+        /* CARD DO PRODUTO REAGINDO AO MOUSE */
+        .card { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 6px 10px rgba(0,0,0,0.08); 
+            border: 2px solid #ffe0b2; 
+            text-align: center; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(230, 81, 0, 0.15);
+            border-color: var(--accent);
+        }
+
+        .card h3 { 
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.3rem; 
+            margin: 10px 0 5px; 
+            color: var(--text);
+        }
+        
+        .card .categoria { 
+            color: var(--primary); 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: #fff3e0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        /* Destaque no preço */
+        .card .preco-tag { 
+            font-size: 1.8rem; 
+            color: var(--secondary-dark); 
+            font-weight: 600; 
+            margin: 10px 0;
+            font-family: var(--font-body);
+        }
+        .card .preco-tag small { font-size: 1rem; font-weight: 400; color: #757575; }
+
+        /* --- BOTÕES ESTILIZADOS --- */
+        button { 
+            font-family: var(--font-body);
+            font-weight: 600;
+            border: none; 
+            padding: 12px 20px; 
+            border-radius: 50px; /* Arredondado moderno */
+            cursor: pointer; 
+            width: 100%; 
+            margin-top: 10px; 
+            transition: all 0.2s ease; 
+            font-size: 1rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+
+        .btn-adicionar { 
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            color: white; 
+        }
+        .btn-adicionar:hover { background: var(--secondary-dark); }
+
+        .btn-finalizar { 
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            color: white; 
+            font-size: 1.1rem;
+            padding: 15px;
+        }
+        .btn-finalizar:hover { background: var(--primary); }
+
+        .btn-cancelar { background-color: #eeeeee; color: #616161; margin-top: 10px; }
+        .btn-cancelar:hover { background-color: #e0e0e0; }
+
+        /* --- SEÇÃO DO CARRINHO (ESTILO RECIBO RÚSTICO) --- */
+        .carrinho { 
+            flex: 1; 
+            background: var(--card-bg); 
+            padding: 25px; 
+            border-radius: 15px; 
+            box-shadow: 0 6px 10px rgba(0,0,0,0.08); 
+            border: 2px solid var(--primary); 
+            height: fit-content; 
+            min-width: 300px;
+            position: sticky; /* Segue a tela */
+            top: 20px;
+        }
+        
+        .carrinho h2 { 
+            font-family: var(--font-title); 
+            color: var(--primary-dark); 
+            text-align: center; 
+            margin-top: 0;
+            font-size: 2.2rem;
+        }
+        
+        #itens-carrinho { list-style: none; padding: 0; margin: 20px 0; border-top: 1px dashed #ccc; }
+        #itens-carrinho li { 
+            display: flex; justify-content: space-between; padding: 10px 0; 
+            border-bottom: 1px dashed #eee; font-size: 0.95rem; 
+        }
+        
+        .total-container { 
+            text-align: center; margin: 20px 0; background: #fff3e0; 
+            padding: 15px; border-radius: 10px; border: 1px solid #ffe0b2;
+        }
+        .total-container h3 { margin: 0; color: var(--text); font-weight: 400; }
+        .total-container span { 
+            font-size: 2.2rem; color: var(--secondary-dark); font-weight: 600; 
+            display: block; margin-top: 5px;
+        }
+
+        /* --- MODAL DE CHECKOUT MODERNO --- */
+        #modal-checkout {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(62, 39, 35, 0.8); backdrop-filter: blur(5px); /* Fundo desfocado marrom */
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background-color: white; margin: 5% auto; padding: 35px; border-radius: 20px;
+            width: 90%; max-width: 500px; border: 4px solid var(--accent);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            position: relative;
+            animation: slideUp 0.4s;
+        }
+        
+        .modal-content h2 { font-family: var(--font-title); color: var(--primary); text-align: center; font-size: 2.5rem; margin-top: 0; }
+        
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 7px; color: var(--text); font-size: 0.95rem;}
+        .form-group input, .form-group select { 
+            width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; 
+            border-radius: 8px; box-sizing: border-box; font-family: var(--font-body);
+            transition: 0.2s; font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(230, 81, 0, 0.1); }
+        
+        .resumo-pedido { background: #f1f8e9; padding: 15px; border-radius: 10px; margin-bottom: 25px; border-left: 5px solid var(--secondary); color: var(--secondary-dark); }
+        .resumo-pedido strong { font-size: 1.1rem; }
+
+        /* Animações */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2.5rem; }
+            .container { flex-direction: column-reverse; }
+            .carrinho { position: static; width: auto; margin-bottom: 20px;}
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🔥 Arraiá do Artesanato 🌽</h1>
+        <p>🤠 As mió lembrancinha e decoração da região, uai! 🪗🎉</p>
+    </header>
+
+    <div class="container">
+        <div class="produtos" id="lista-produtos">
+            <p style="text-align: center; grid-column: 1/-1; color: #757575;">⏳ Carregando as lindeza da nossa barraquinha... ✨</p>
+        </div>
+
+        <div class="carrinho">
+            <h2>🛒 Seu Balaio 📝</h2>
+            <ul id="itens-carrinho">
+                <li style="color: #757575; justify-content: center; border: none;">Seu balaio tá vazio, sô!</li>
+            </ul>
+            <div class="total-container">
+                <h3>💰 Total do Pedido</h3>
+                <span>R$ <span id="total-carrinho">0.00</span></span>
+            </div>
+            <button class="btn-finalizar" onclick="abrirCheckout()">✅ Finalizar Compra</button>
+        </div>
+    </div>
+
+    <div id="modal-checkout">
+        <div class="modal-content">
+            <h2>🎈 Quase lá, sô! 🎈</h2>
+            <p style="text-align: center; color: #616161; margin-bottom: 20px;">Preencha os dados pra gente levar o balaio até você.</p>
+            
+            <div class="resumo-pedido">
+                📍 <strong>Resumo:</strong> Você tá levando <span id="resumo-total"></span> da nossa barraquinha!
+            </div>
+
+            <form id="form-pedido">
+                <div class="form-group">
+                    <label>📝 Seu Nome Completo:</label>
+                    <input type="text" id="nome" placeholder="Ex: João da Silva" required>
+                </div>
+                <div class="form-group">
+                    <label>📱 WhatsApp:</label>
+                    <input type="tel" id="telefone" placeholder="(00) 00000-0000" required>
+                </div>
+                <div class="form-group">
+                    <label>🏠 Endereço Completo de Entrega:</label>
+                    <input type="text" id="endereco" placeholder="Rua, número, bairro, cidade..." required>
+                </div>
+                <div class="form-group">
+                    <label>💵 Forma de Pagamento:</label>
+                    <select id="pagamento">
+                        <option value="pix">Pix (tem desconto! 💸)</option>
+                        <option value="dinheiro">Dinheiro na entrega 💵</option>
+                        <option value="cartao">Cartão de Crédito 💳</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-finalizar" style="margin-top: 20px;">🚀 Confirmar e Encomendar!</button>
+                <button type="button" class="btn-cancelar" onclick="fecharCheckout()">Voltar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // MANTENDO A LÓGICA DO SEU BACKEND QUE JÁ FUNCIONA!
+        const API_URL = 'https://festa-junina-api.vercel.app/api';
+        let carrinho = [];
+
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch(`${API_URL}/produtos`);
+                const produtos = await resposta.json();
+                
+                const container = document.getElementById('lista-produtos');
+                container.innerHTML = ''; 
+
+                produtos.forEach(produto => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    
+                    const nomeCategoria = produto.categorias1 ? produto.categorias1.nome : 'Geral';
+
+                    card.innerHTML = `
+                        <p class="categoria">🏷️ ${nomeCategoria}</p>
+                        <h3>${produto.nome}</h3>
+                        <div class="preco-tag"><small>R$</small> ${Number(produto.preco).toFixed(2)}</div>
+                        <button class="btn-adicionar" onclick="adicionarAoCarrinho(${produto.id}, '${produto.nome}', ${produto.preco})">
+                            🛍️ Adicionar
+                        </button>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (erro) {
+                console.error(erro);
+                document.getElementById('lista-produtos').innerHTML = '<p style="text-align: center; grid-column: 1/-1;">🪫 Vixe! Faltou energia na barraquinha. Tente novamente mais tarde.</p>';
+            }
+        }
+
+        function adicionarAoCarrinho(id, nome, preco) {
+            carrinho.push({ id, nome, preco });
+            atualizarCarrinho();
+        }
+
+        function atualizarCarrinho() {
+            const lista = document.getElementById('itens-carrinho');
+            const spanTotal = document.getElementById('total-carrinho');
+            
+            lista.innerHTML = '';
+            let total = 0;
+
+            if (carrinho.length === 0) {
+                lista.innerHTML = '<li style="color: #757575; justify-content: center; border: none;">Seu balaio tá vazio, sô!</li>';
+            } else {
+                carrinho.forEach(item => {
+                    lista.innerHTML += `
+                        <li>
+                            <span>🎁 ${item.nome}</span>
+                            <strong>R$ ${Number(item.preco).toFixed(2)}</strong>
+                        </li>`;
+                    total += Number(item.preco);
+                });
+            }
+
+            spanTotal.innerText = total.toFixed(2);
+        }
+
+        // --- LÓGICA DO MODAL (ATUALIZADA) ---
+        function abrirCheckout() {
+            if (carrinho.length === 0) {
+                alert('🛒 Oxe, o balaio tá vazio! Escolha algo primeiro pra festança.');
+                return;
+            }
+
+            const total = carrinho.reduce((acc, item) => acc + Number(item.preco), 0);
+            document.getElementById('resumo-total').innerText = `R$ ${total.toFixed(2)} (${carrinho.length} itens)`;
+            document.getElementById('modal-checkout').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Impede scroll do fundo
+        }
+
+        function fecharCheckout() {
+            document.getElementById('modal-checkout').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Reativa scroll
+        }
+
+        async function finalizarPedido(e) {
+            e.preventDefault(); // Impede recarregar página
+
+            const total = carrinho.reduce((acc, item) => acc + Number(item.preco), 0);
+            
+            const dadosPedido = {
+                cliente_nome: document.getElementById('nome').value,
+                total: total,
+                status: 'Pendente' 
+            };
+
+            try {
+                const resposta = await fetch(`${API_URL}/pedidos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dadosPedido)
+                });
+
+                if (resposta.ok) {
+                    alert('🎆 ÊTA TREM BÃO! Pedido feito com sucesso! A festança tá garantida, sô! ✨');
+                    carrinho = [];
+                    atualizarCarrinho();
+                    fecharCheckout();
+                    document.getElementById('form-pedido').reset(); // Limpa form
+                } else {
+                    alert('⚠️ Eita! Deu um tropeço aqui ao salvar o pedido.');
+                }
+            } catch (erro) {
+                alert('🌐 Vixe! Ocorreu um erro de conexão com a API.');
+            }
+        }
+
+        // Atribui a função ao evento de submit do form
+        document.getElementById('form-pedido').onsubmit = finalizarPedido;
+
+        carregarProdutos();
+    </script>
+</body>
+</html>
