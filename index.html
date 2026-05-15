@@ -26,6 +26,7 @@
             margin: 0; 
             padding: 0; 
             overflow-x: hidden;
+            transition: background-color 0.6s ease;
         }
 
         /* --- CABEÇALHO RÚSTICO COM BANDEIRINHAS --- */
@@ -56,7 +57,7 @@
                 linear-gradient(-45deg, #f44336 25%, transparent 25%);
             background-size: 30px 60px;
             background-position: 0 0, 0 0, 15px 0, 15px 0, 30px 0, 30px 0;
-            repeat: repeat-x;
+            background-repeat: repeat-x;
         }
 
         header h1 { 
@@ -259,10 +260,12 @@
     </style>
 </head>
 <body>
+    <canvas id="fogueira-canvas"></canvas>
 
     <header>
         <h1>🔥 Arraiá do Artesanato 🌽</h1>
         <p>🤠 As mió lembrancinha e decoração da região, uai! 🪗🎉</p>
+        <p id="temperatura-cidade" style="margin-top: 0.7rem; font-size: 1rem; opacity:0.95;">🌡️ Carregando temperatura da cidade...</p>
     </header>
 
     <div class="container">
@@ -323,6 +326,7 @@
     <script>
         // MANTENDO A LÓGICA DO SEU BACKEND QUE JÁ FUNCIONA!
         const API_URL = 'https://festa-junina-api.vercel.app/api';
+        const MAX_ITENS_CARRINHO = 20; // Limite para evitar travar a loja
         let carrinho = [];
 
         async function carregarProdutos() {
@@ -356,6 +360,11 @@
         }
 
         function adicionarAoCarrinho(id, nome, preco) {
+            if (carrinho.length >= MAX_ITENS_CARRINHO) {
+                alert(`⚠️ O carrinho já atingiu o limite de ${MAX_ITENS_CARRINHO} itens. Finalize antes de adicionar mais.`);
+                return;
+            }
+
             carrinho.push({ id, nome, preco });
             atualizarCarrinho();
         }
@@ -436,7 +445,167 @@
         // Atribui a função ao evento de submit do form
         document.getElementById('form-pedido').onsubmit = finalizarPedido;
 
+        async function buscarCoordenadasDaCidade() {
+            if ('geolocation' in navigator) {
+                return new Promise((resolve) => {
+                    navigator.geolocation.getCurrentPosition(
+                        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude, source: 'gps' }),
+                        () => resolve(null),
+                        { timeout: 8000 }
+                    );
+                });
+            }
+            return null;
+        }
+
+        async function buscarLocalizacaoPorIP() {
+            try {
+                const resposta = await fetch('https://ipapi.co/json/');
+                if (!resposta.ok) return null;
+                const dados = await resposta.json();
+                if (!dados.latitude || !dados.longitude) return null;
+                return { lat: dados.latitude, lon: dados.longitude, city: dados.city || 'sua cidade' };
+            } catch {
+                return null;
+            }
+        }
+
+        function aplicarCorPorTemperatura(temp) {
+            let cor = '#fff8e1';
+            let texto = '🌡️ Temperatura local não disponível.';
+
+            if (temp <= 15) {
+                cor = '#e3f2fd';
+                texto = `🌡️ ${temp.toFixed(1)}°C — clima fresquinho e convidativo.`;
+            } else if (temp <= 25) {
+                cor = '#f1f8e9';
+                texto = `🌡️ ${temp.toFixed(1)}°C — temperatura amena na cidade.`;
+            } else if (temp <= 32) {
+                cor = '#fff3e0';
+                texto = `🌡️ ${temp.toFixed(1)}°C — quentinho, bem junino.`;
+            } else {
+                cor = '#ffebee';
+                texto = `🌡️ ${temp.toFixed(1)}°C — cidade quente demais, trem de São João!`;
+            }
+
+            document.documentElement.style.setProperty('--background', cor);
+            const tempEl = document.getElementById('temperatura-cidade');
+            if (tempEl) tempEl.innerText = texto;
+        }
+
+        async function carregarTemperaturaDaCidade() {
+            const tempEl = document.getElementById('temperatura-cidade');
+            if (tempEl) tempEl.innerText = '🌡️ Buscando temperatura da cidade...';
+
+            let coords = await buscarCoordenadasDaCidade();
+            if (!coords) coords = await buscarLocalizacaoPorIP();
+            if (!coords) {
+                if (tempEl) tempEl.innerText = '🌡️ Não foi possível obter a temperatura local.';
+                return;
+            }
+
+            try {
+                const resposta = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current_weather=true&temperature_unit=celsius`);
+                if (!resposta.ok) throw new Error('Falha no serviço de clima');
+                const dados = await resposta.json();
+                if (!dados.current_weather || typeof dados.current_weather.temperature !== 'number') throw new Error('Sem temperatura');
+                aplicarCorPorTemperatura(dados.current_weather.temperature);
+            } catch (erro) {
+                if (tempEl) tempEl.innerText = '🌡️ Não foi possível carregar o clima agora.';
+            }
+        }
+
         carregarProdutos();
+        carregarTemperaturaDaCidade();
     </script>
+
+    <script>
+    (function(){
+        const canvas = document.getElementById('fogueira-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function setSize(){
+            const DPR = window.devicePixelRatio || 1;
+            canvas.width = window.innerWidth * DPR;
+            canvas.height = window.innerHeight * DPR;
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        }
+        setSize();
+        window.addEventListener('resize', setSize);
+
+        canvas.style.position = 'fixed';
+        canvas.style.left = '0';
+        canvas.style.top = '0';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '9999';
+
+        const mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+
+        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        window.addEventListener('touchmove', (e) => { const t = e.touches[0]; if(t){ mouse.x = t.clientX; mouse.y = t.clientY; } }, { passive:true });
+
+        const particles = [];
+
+        function spawn(){
+            for(let i=0;i<8;i++){
+                const angle = (Math.random() - 0.5) * Math.PI * 0.5;
+                const speed = Math.random() * 1.8 + 0.5;
+                particles.push({
+                    x: mouse.x + (Math.random()-0.5) * 22,
+                    y: mouse.y + (Math.random()-0.5) * 10,
+                    vx: Math.sin(angle) * speed,
+                    vy: - (Math.random() * 1.8 + 0.5),
+                    life: Math.random() * 45 + 35,
+                    size: Math.random() * 14 + 6,
+                    hue: Math.random() * 40 + 20
+                });
+            }
+        }
+
+        function update(){
+            for(let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.99;
+                p.vy += 0.02;
+                p.life -= 1;
+                p.size *= 0.996;
+                if(p.life <= 0 || p.size < 0.5) particles.splice(i, 1);
+            }
+        }
+
+        function draw(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.globalCompositeOperation = 'lighter';
+            particles.forEach(p => {
+                const alpha = Math.max(0, Math.min(1, p.life / 60));
+                const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                grad.addColorStop(0, `rgba(255, ${Math.min(220, 130 + p.hue)}, 0, ${alpha})`);
+                grad.addColorStop(0.4, `rgba(${Math.min(230, 200 + p.hue)}, 80, 0, ${alpha * 0.7})`);
+                grad.addColorStop(1, `rgba(30,10,0,0)`);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(p.x,p.y,p.size,0,Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        let last = performance.now();
+        function loop(t){
+            last = t;
+            spawn();
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        requestAnimationFrame(loop);
+    })();
+    </script>
+
 </body>
 </html>
